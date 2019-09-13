@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	controllers "github.com/Dilicor/lts/api/controllers"
+	controllers "github.com/deejcoder/go-restful-boilerplate/api/controllers"
 	"github.com/gorilla/mux"
 )
 

@@ -7,8 +7,8 @@ import (
 
 	"github.com/olivere/elastic"
 
-	"github.com/Dilicor/lts/storage"
-	"github.com/Dilicor/lts/util/config"
+	"github.com/deejcoder/go-restful-boilerplate/storage"
+	"github.com/deejcoder/go-restful-boilerplate/util/config"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"

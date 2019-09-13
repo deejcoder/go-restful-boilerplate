@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/Dilicor/lts/util/config"
+	"github.com/deejcoder/go-restful-boilerplate/util/config"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

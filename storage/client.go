@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	config "github.com/Dilicor/lts/util/config"
+	config "github.com/deejcoder/go-restful-boilerplate/util/config"
 	"github.com/olivere/elastic"
 	log "github.com/sirupsen/logrus"
 )

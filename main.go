@@ -1,7 +1,7 @@
 package main
 
 import (
-	cmd "github.com/Dilicor/lts/util/cmd"
+	cmd "github.com/deejcoder/go-restful-boilerplate/util/cmd"
 )
 
 func main() {

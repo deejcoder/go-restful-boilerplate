@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/Dilicor/lts/api"
+	"github.com/deejcoder/go-restful-boilerplate/api"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
