@@ -1,3 +1,8 @@
+/*
+routes seperates routes from the main application logic, define routes or paths in
+defineRoutes().
+*/
+
 package api
 
 import (
@@ -15,11 +20,14 @@ type Route struct {
 }
 
 // BuildRouter creates a new Router and adds all defined routes to it
-func BuildRouter(router *mux.Router) {
+func BuildRouter() *mux.Router {
+	router := mux.NewRouter()
+
 	routes := defineRoutes()
 	for _, route := range routes {
 		router.HandleFunc(route.Path, route.Controller).Methods(route.Methods)
 	}
+	return router
 }
 
 func defineRoutes() []Route {

@@ -1,12 +1,33 @@
-package api
+/*
+controller_wrapper encapsulates controllers (http.Handler), to provide
+accress to the database client, to enable logging and set generic response parameters such as headers.
+*/
+
+package controllers
 
 import (
 	"context"
 	"net/http"
 	"time"
 
+	"github.com/deejcoder/go-restful-boilerplate/util/config"
+	"github.com/olivere/elastic"
 	log "github.com/sirupsen/logrus"
 )
+
+// AppContext allows access to shared app data within controllers
+type AppContext struct {
+	Db     *elastic.Client
+	Config *config.Config
+}
+
+type appContextKey struct{}
+
+// GetAppContext returns the AppContext from a given request
+func GetAppContext(r *http.Request) *AppContext {
+	ac, _ := r.Context().Value(appContextKey{}).(*AppContext)
+	return ac
+}
 
 // ControllerWrapper is a wrapper which wraps all handler functions
 func ControllerWrapper(appContext *AppContext, next http.Handler) http.Handler {
@@ -22,10 +43,9 @@ func ControllerWrapper(appContext *AppContext, next http.Handler) http.Handler {
 
 		}()
 
-		// only return JSON responses
 		w.Header().Set("Content-Type", "application/json")
 
-		// add AppContext to request context for access within requests
+		// add AppContext to request context
 		ctx := context.WithValue(r.Context(), appContextKey{}, appContext)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

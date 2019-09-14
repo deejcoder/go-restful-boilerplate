@@ -17,6 +17,7 @@ type Config struct {
 	AppShortName string
 	API          apiConfig
 	Database     databaseConfig
+	Keys         secrets
 }
 
 type apiConfig struct {
@@ -31,6 +32,10 @@ type databaseConfig struct {
 	Port int
 }
 
+type secrets struct {
+	CSRFKey string
+}
+
 // init serializes YAML into a Config struct
 func (cfg *Config) init() {
 	cfg.Version = viper.GetString("version")
@@ -43,6 +48,7 @@ func (cfg *Config) init() {
 	cfg.API.AllowedOrigins = viper.GetStringSlice("api.allowed_origins")
 	cfg.Database.Host = viper.GetString("database.host")
 	cfg.Database.Port = viper.GetInt("database.port")
+	cfg.Keys.CSRFKey = viper.GetString("secrets.csrf")
 }
 
 // GetConfig loads config data into a Config struct
