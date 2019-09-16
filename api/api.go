@@ -5,15 +5,14 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/deejcoder/go-restful-boilerplate/api/controllers"
+	h "github.com/deejcoder/go-restful-boilerplate/api/handlers"
 	"github.com/deejcoder/go-restful-boilerplate/storage"
 	"github.com/deejcoder/go-restful-boilerplate/util/config"
-	"github.com/gorilla/csrf"
 	"github.com/gorilla/handlers"
 	log "github.com/sirupsen/logrus"
 )
 
-func configure(ac *controllers.AppContext) *http.Server {
+func configure(ac *h.AppContext) *http.Server {
 
 	config := config.GetConfig()
 
@@ -25,12 +24,9 @@ func configure(ac *controllers.AppContext) *http.Server {
 
 	router := BuildRouter()
 
-	// since AllowedOriigns (Access-Control-Allow-Origin) is *, provide CSRF protection
-	CSRF := csrf.Protect([]byte(config.Keys.CSRFKey))
-
 	s := &http.Server{
 		Addr:    fmt.Sprintf(":%d", ac.Config.API.Port),
-		Handler: controllers.ControllerWrapper(ac, CSRF(cors(router))),
+		Handler: h.HandlerWrapper(ac, cors(router)),
 	}
 
 	return s
@@ -40,7 +36,7 @@ func configure(ac *controllers.AppContext) *http.Server {
 func Start(ctx context.Context) {
 
 	db := storage.Connect()
-	appContext := controllers.AppContext{
+	appContext := h.AppContext{
 		Db:     db,
 		Config: config.GetConfig(),
 	}

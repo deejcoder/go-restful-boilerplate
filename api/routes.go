@@ -8,15 +8,15 @@ package api
 import (
 	"net/http"
 
-	controllers "github.com/deejcoder/go-restful-boilerplate/api/controllers"
+	handlers "github.com/deejcoder/go-restful-boilerplate/api/handlers"
 	"github.com/gorilla/mux"
 )
 
 // Route defines a Route
 type Route struct {
-	Path       string
-	Controller func(http.ResponseWriter, *http.Request)
-	Methods    string
+	Path    string
+	Handler func(http.ResponseWriter, *http.Request)
+	Methods string
 }
 
 // BuildRouter creates a new Router and adds all defined routes to it
@@ -25,13 +25,14 @@ func BuildRouter() *mux.Router {
 
 	routes := defineRoutes()
 	for _, route := range routes {
-		router.HandleFunc(route.Path, route.Controller).Methods(route.Methods)
+		router.HandleFunc(route.Path, route.Handler).Methods(route.Methods)
 	}
 	return router
 }
 
 func defineRoutes() []Route {
 	return []Route{
-		{Path: "/api", Controller: controllers.Index, Methods: "GET"},
+		{Path: "/api/", Handler: handlers.Index, Methods: "GET"},
+		{Path: "/api/token", Handler: handlers.Authenticate, Methods: "POST"},
 	}
 }

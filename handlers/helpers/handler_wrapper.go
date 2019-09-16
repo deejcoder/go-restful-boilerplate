@@ -3,7 +3,7 @@ controller_wrapper encapsulates controllers (http.Handler), to provide
 accress to the database client, to enable logging and set generic response parameters such as headers.
 */
 
-package controllers
+package helpers
 
 import (
 	"context"
@@ -30,7 +30,7 @@ func GetAppContext(r *http.Request) *AppContext {
 }
 
 // ControllerWrapper is a wrapper which wraps all handler functions
-func ControllerWrapper(appContext *AppContext, next http.Handler) http.Handler {
+func HandlerWrapper(appContext *AppContext, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		// simple logging
