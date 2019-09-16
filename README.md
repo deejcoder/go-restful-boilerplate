@@ -10,6 +10,12 @@ This is a boilerplate for creating RESTful API services in Golang. This includes
 * Database connectivity
 
 
+## Getting started
+* Clone the project
+* Copy `config.example.yaml` and rename the new version as `config.yaml`
+* Configure `config.yaml` to your needs
+* Get all packages & RUN!
+
 ## Roadmap
 * `/api` is the app entry point, and defines the app's routes
 * `/handlers` contains all handlers

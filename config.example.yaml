@@ -17,4 +17,5 @@ database:
   port: 9200
   
 secrets:
-  csrf: some-256-bit(32-bytes)-auth-key
+  csrf: some-secret-256-bit-key
+  jwtsecret: another-some-secret-256-bit-key
