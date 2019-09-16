@@ -8,7 +8,7 @@ package api
 import (
 	"net/http"
 
-	handlers "github.com/deejcoder/go-restful-boilerplate/api/handlers"
+	handlers "github.com/deejcoder/go-restful-boilerplate/handlers"
 	"github.com/gorilla/mux"
 )
 

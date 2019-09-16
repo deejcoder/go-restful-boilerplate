@@ -8,8 +8,10 @@ import (
 
 // Index index
 func Index(w http.ResponseWriter, r *http.Request) {
+	response := helpers.NewResponse()
 	validated := helpers.ValidateClient(r)
+
 	if !validated {
-		http.Error(w, "Not authorized", http.StatusForbidden)
+		response.Error(w, "Client not yet authorized", helpers.ErrorNotAuthorized)
 	}
 }

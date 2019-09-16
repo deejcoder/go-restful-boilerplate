@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"net/http"
 
-	h "github.com/deejcoder/go-restful-boilerplate/api/handlers"
+	"github.com/deejcoder/go-restful-boilerplate/handlers/helpers"
 	"github.com/deejcoder/go-restful-boilerplate/storage"
 	"github.com/deejcoder/go-restful-boilerplate/util/config"
 	"github.com/gorilla/handlers"
 	log "github.com/sirupsen/logrus"
 )
 
-func configure(ac *h.AppContext) *http.Server {
+func configure(ac *helpers.AppContext) *http.Server {
 
 	config := config.GetConfig()
 
@@ -26,7 +26,7 @@ func configure(ac *h.AppContext) *http.Server {
 
 	s := &http.Server{
 		Addr:    fmt.Sprintf(":%d", ac.Config.API.Port),
-		Handler: h.HandlerWrapper(ac, cors(router)),
+		Handler: helpers.HandlerWrapper(ac, cors(router)),
 	}
 
 	return s
@@ -36,7 +36,7 @@ func configure(ac *h.AppContext) *http.Server {
 func Start(ctx context.Context) {
 
 	db := storage.Connect()
-	appContext := h.AppContext{
+	appContext := helpers.AppContext{
 		Db:     db,
 		Config: config.GetConfig(),
 	}
