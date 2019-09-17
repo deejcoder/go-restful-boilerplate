@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/deejcoder/go-restful-boilerplate/handlers/helpers"
+	"github.com/deejcoder/go-restful-boilerplate/helpers"
 )
 
 func Authenticate(w http.ResponseWriter, r *http.Request) {

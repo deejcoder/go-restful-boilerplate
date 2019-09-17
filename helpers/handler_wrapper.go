@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/deejcoder/go-restful-boilerplate/util/config"
+	"github.com/gorilla/csrf"
 	"github.com/olivere/elastic"
 	log "github.com/sirupsen/logrus"
 )
@@ -44,6 +45,7 @@ func HandlerWrapper(appContext *AppContext, next http.Handler) http.Handler {
 		}()
 
 		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("X-CSRF-Token", csrf.Token(r))
 
 		// add AppContext to request context
 		ctx := context.WithValue(r.Context(), appContextKey{}, appContext)

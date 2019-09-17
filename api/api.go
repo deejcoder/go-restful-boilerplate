@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/deejcoder/go-restful-boilerplate/handlers/helpers"
+	"github.com/deejcoder/go-restful-boilerplate/helpers"
 	"github.com/deejcoder/go-restful-boilerplate/storage"
 	"github.com/deejcoder/go-restful-boilerplate/util/config"
+	"github.com/gorilla/csrf"
 	"github.com/gorilla/handlers"
 	log "github.com/sirupsen/logrus"
 )
@@ -24,9 +25,15 @@ func configure(ac *helpers.AppContext) *http.Server {
 
 	router := BuildRouter()
 
+	// enable csrf tokens
+	csrfMiddleware := csrf.Protect(
+		[]byte(config.Keys.CSRFKey),
+		csrf.Secure(config.API.UsingHttps),
+	)
+
 	s := &http.Server{
 		Addr:    fmt.Sprintf(":%d", ac.Config.API.Port),
-		Handler: helpers.HandlerWrapper(ac, cors(router)),
+		Handler: csrfMiddleware(helpers.HandlerWrapper(ac, cors(router))),
 	}
 
 	return s

@@ -21,6 +21,7 @@ type Config struct {
 }
 
 type apiConfig struct {
+	UsingHttps     bool
 	Port           int
 	AllowedMethods []string
 	AllowedHeaders []string
@@ -43,6 +44,7 @@ func (cfg *Config) init() {
 	cfg.setLogLevel(viper.GetString("log_level"))
 	cfg.AppName = viper.GetString("app_name")
 	cfg.AppShortName = viper.GetString("app_short_name")
+	cfg.API.UsingHttps = viper.GetBool("api.usingHttps")
 	cfg.API.Port = viper.GetInt("api.port")
 	cfg.API.AllowedMethods = viper.GetStringSlice("api.allowed_methods")
 	cfg.API.AllowedHeaders = viper.GetStringSlice("api.allowed_headers")

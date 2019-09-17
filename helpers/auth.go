@@ -11,7 +11,7 @@ import (
 
 // AuthorizeClient generates a JWT token, and attaches cookie to the ResponseWriter
 func AuthorizeClient(w http.ResponseWriter) {
-	// generate JWT token
+	// generate JWT token with an expiry of 12 hours
 	exp := time.Now().UTC().Add(12 * time.Hour)
 	tk := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"exp": exp.Unix(),
@@ -28,6 +28,7 @@ func AuthorizeClient(w http.ResponseWriter) {
 	http.SetCookie(w, &cookie)
 }
 
+// ValidateClient checks if a client is authorized
 func ValidateClient(r *http.Request) bool {
 	cookie, err := r.Cookie("token")
 	if err != nil {
@@ -48,4 +49,16 @@ func ValidateClient(r *http.Request) bool {
 		return true
 	}
 	return false
+}
+
+// RequireAuth wraps a route, requiring authorization for that route
+func RequireAuth(handler http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		if authorized := ValidateClient(r); !authorized {
+			NewResponse().Error(w, "Unauthorized", ErrorNotAuthorized)
+			return
+		}
+		handler(w, r)
+	}
 }

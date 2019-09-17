@@ -19,7 +19,7 @@ This is a boilerplate for creating RESTful API services in Golang. This includes
 ## Roadmap
 * `/api` is the app entry point, and defines the app's routes
 * `/handlers` contains all handlers
-* `/handlers/helpers` contains helper files & functions to assist handlers
+* `/helpers` contains helper files & functions to assist handlers
 * `/storage` consists of the database client, and database schemas
 * `/util` contains the app's console commands and configuration
 

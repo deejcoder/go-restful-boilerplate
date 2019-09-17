@@ -3,15 +3,12 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/deejcoder/go-restful-boilerplate/handlers/helpers"
+	"github.com/deejcoder/go-restful-boilerplate/helpers"
 )
 
 // Index index
 func Index(w http.ResponseWriter, r *http.Request) {
 	response := helpers.NewResponse()
-	validated := helpers.ValidateClient(r)
+	response.Success(w, "Authorization validated", nil)
 
-	if !validated {
-		response.Error(w, "Client not yet authorized", helpers.ErrorNotAuthorized)
-	}
 }
