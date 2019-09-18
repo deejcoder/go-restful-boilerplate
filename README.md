@@ -2,19 +2,20 @@
 
 This is a boilerplate for creating RESTful API services in Golang. This includes,
 
-* Basic authorization using JWT tokens embedded within Cookies
-* CSRF protection (in progress)
-* Generic JSON responses (in progress)
+* Authorization using JWT tokens embedded within Cookies
+* CSRF protection
+* Standardized JSON responses
+* Logging using Logrus
 * Configuration using Viper
 * Commands using Cobra
-* Database connectivity
+* Example of structuring database logic/schemas
 
 
-## Getting started
+## Getting started with a breeze 😏
 * Clone the project
 * Copy `config.example.yaml` and rename the new version as `config.yaml`
 * Configure `config.yaml` to your needs
-* Get all packages & RUN!
+* Get all of the dependencies by executing `go get ./...` in your project root directory & **RUN**!
 
 ## Roadmap
 * `/api` is the app entry point, and defines the app's routes
