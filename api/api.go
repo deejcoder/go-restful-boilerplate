@@ -31,9 +31,15 @@ func configure(ac *helpers.AppContext) *http.Server {
 		csrf.Secure(config.API.UsingHttps),
 	)
 
+	handler := cors(router)
+	handler = helpers.AttachCSRFToken(handler)
+	handler = csrfMiddleware(handler)
+	handler = helpers.AttachAppContext(ac, handler)
+	handler = helpers.AttachLogging(handler)
+
 	s := &http.Server{
 		Addr:    fmt.Sprintf(":%d", ac.Config.API.Port),
-		Handler: csrfMiddleware(helpers.HandlerWrapper(ac, cors(router))),
+		Handler: handler,
 	}
 
 	return s

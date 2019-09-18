@@ -22,33 +22,42 @@ type AppContext struct {
 	Config *config.Config
 }
 
-type appContextKey struct{}
+type key struct{}
 
-// GetAppContext returns the AppContext from a given request
+// GetAppContext returns the AppContext from a given request for access within Handlers
 func GetAppContext(r *http.Request) *AppContext {
-	ac, _ := r.Context().Value(appContextKey{}).(*AppContext)
+	ac, _ := r.Context().Value(key{}).(*AppContext)
 	return ac
 }
 
-// ControllerWrapper is a wrapper which wraps all handler functions
-func HandlerWrapper(appContext *AppContext, next http.Handler) http.Handler {
+// AttachAppContext attaches an AppContext to a request
+func AttachAppContext(appContext *AppContext, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), key{}, appContext)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
 
-		// simple logging
+// AttachCSRFToken attaches a CSRF token to the header (X-CSRF-Token)
+func AttachCSRFToken(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("X-CSRF-Token", csrf.Token(r))
+		next.ServeHTTP(w, r)
+	})
+}
+
+func AttachLogging(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		startTime := time.Now()
+
+		// logs will be printed at the end of the request
 		defer func() {
 			log.WithFields(log.Fields{
 				"remote":   r.RemoteAddr,
 				"duration": time.Since(startTime),
 			}).Infof("%s %s", r.Method, r.URL.RequestURI())
-
 		}()
 
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("X-CSRF-Token", csrf.Token(r))
-
-		// add AppContext to request context
-		ctx := context.WithValue(r.Context(), appContextKey{}, appContext)
-		next.ServeHTTP(w, r.WithContext(ctx))
+		next.ServeHTTP(w, r)
 	})
 }
