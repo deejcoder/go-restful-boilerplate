@@ -1,3 +1,9 @@
+/*
+auth provides authorization functionality. It should be noted, this is the backend for authorization,
+users can be implemented by creating a User schema, which may contain a AuthorizeUser function, which compares
+passwords, and then invokes AuthorizeClient
+*/
+
 package helpers
 
 import (
@@ -56,7 +62,7 @@ func RequireAuth(handler http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		if authorized := ValidateClient(r); !authorized {
-			NewResponse().Error(w, "Unauthorized", ErrorNotAuthorized)
+			NewResponse(w, r).Error("Unauthorized", ErrorNotAuthorized)
 			return
 		}
 		handler(w, r)

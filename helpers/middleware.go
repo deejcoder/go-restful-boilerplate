@@ -1,6 +1,6 @@
 /*
-controller_wrapper encapsulates controllers (http.Handler), to provide
-accress to the database client, to enable logging and set generic response parameters such as headers.
+middleware provides additional functionality to requests
+AttachAppContext provides access to the database client and configuration, from requests
 */
 
 package helpers
@@ -16,7 +16,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// AppContext allows access to shared app data within controllers
+// AppContext allows access to shared app data within handlers
 type AppContext struct {
 	Db     *elastic.Client
 	Config *config.Config

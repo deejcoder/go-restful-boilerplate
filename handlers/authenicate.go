@@ -9,6 +9,6 @@ import (
 func Authenticate(w http.ResponseWriter, r *http.Request) {
 	helpers.AuthorizeClient(w)
 
-	response := helpers.NewResponse()
-	response.Success(w, "Rights authorized", nil)
+	response := helpers.NewResponse(w, r)
+	response.Success("Rights authorized", nil)
 }

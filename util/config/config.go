@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
 
 // Config wraps the config file as a struct
@@ -69,7 +70,6 @@ func InitConfig() (*Config, error) {
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
 	viper.SetConfigType("yaml")
-
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
@@ -78,13 +78,19 @@ func InitConfig() (*Config, error) {
 	}
 
 	cfg := GetConfig()
-	log.SetLevel(cfg.LogLevel)
 
+	// setup logging
+	formatter := new(prefixed.TextFormatter)
+	formatter.FullTimestamp = true
+	log.SetFormatter(formatter)
+	log.SetLevel(cfg.LogLevel)
 	return cfg, nil
 }
 
 func (cfg *Config) setLogLevel(loglevel string) {
 	switch loglevel {
+	case "debug":
+		cfg.LogLevel = logrus.DebugLevel
 	case "info":
 		cfg.LogLevel = logrus.InfoLevel
 	case "warn":

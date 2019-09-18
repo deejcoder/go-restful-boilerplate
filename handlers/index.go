@@ -8,6 +8,6 @@ import (
 
 // Index index
 func Index(w http.ResponseWriter, r *http.Request) {
-	response := helpers.NewResponse()
-	response.Success(w, "Authorization validated", nil)
+	response := helpers.NewResponse(w, r)
+	response.Success("Authorization validated", nil)
 }

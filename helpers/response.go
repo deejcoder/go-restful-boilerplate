@@ -1,5 +1,5 @@
 /*
-response.go provides an easy way to produce standardized & generic API responses
+response provides an easy way to produce standardized & generic API responses
 
 This file should be converted to easyjson, and cleaned up a bit. This was transferred from a
 previous project.
@@ -10,8 +10,10 @@ these errors should be reserved for reporting issues assoicated with the API ser
 package helpers
 
 import (
-	"encoding/json"
 	"net/http"
+
+	jsoniter "github.com/json-iterator/go"
+	log "github.com/sirupsen/logrus"
 )
 
 /*
@@ -19,6 +21,8 @@ Response is a standardized response for this API which
 is encoded in the body of a HTTP response
 */
 type Response struct {
+	wtr       http.ResponseWriter
+	req       *http.Request
 	Ok        bool         `json:"ok"`
 	ErrorCode int          `json:"errorCode"`
 	Message   string       `json:"message"`
@@ -44,42 +48,58 @@ const (
 	ErrorNotAuthorized   = iota
 )
 
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
 // NewResponse creates a new reply
-func NewResponse() Response {
-	r := Response{}
-	r.ErrorCode = ErrorNoError
-	return r
+func NewResponse(w http.ResponseWriter, r *http.Request) Response {
+	resp := Response{}
+	resp.wtr = w
+	resp.req = r
+	resp.ErrorCode = ErrorNoError
+	return resp
 }
 
-func (r Response) Error(w http.ResponseWriter, message string, errorCode int) {
-	r.Ok = false
-	r.Message = message
-	r.ErrorCode = errorCode
-	r.Commit(w, nil)
+// Error sends an error reply to the client, and logs it
+func (resp Response) Error(message string, errorCode int) {
+	resp.Ok = false
+	resp.Message = message
+	resp.ErrorCode = errorCode
+
+	log.WithFields(log.Fields{
+		"remote":    resp.req.RemoteAddr,
+		"errorcode": errorCode,
+	}).Errorf("%s", message)
+
+	resp.Commit(nil)
 }
 
-func (r Response) Success(w http.ResponseWriter, message string, data interface{}) {
-	r.Ok = true
-	r.Message = message
-	r.ErrorCode = ErrorNoError
-	r.Commit(w, data)
+func (resp Response) Success(message string, data interface{}) {
+	resp.Ok = true
+	resp.Message = message
+	resp.ErrorCode = ErrorNoError
+	resp.Commit(data)
 }
 
 // Commit sends the Response as the HTTP body
-func (r Response) Commit(w http.ResponseWriter, data interface{}) {
-	r.Body.Data = data
-	json.NewEncoder(w).Encode(r)
+func (resp Response) Commit(data interface{}) {
+	resp.wtr.Header().Set("Content-Type", "application/json")
+	resp.Body.Data = data
+
+	err := json.NewEncoder(resp.wtr).Encode(resp)
+	if err != nil {
+		resp.Error("There was a problem preparing the data", ErrorInternalError)
+	}
 }
 
 // AddValidationError adds a validation error to a given Response
-func (r *Response) AddValidationError(path string, err string) {
+func (resp *Response) AddValidationError(path string, err string) {
 	verr := ValidationError{Err: err, Path: path}
-	r.Body.ValidationErrors = append(r.Body.ValidationErrors, verr)
+	resp.Body.ValidationErrors = append(resp.Body.ValidationErrors, verr)
 }
 
 // HasValidationErrors checks if a Response has any validation errors
-func (r *Response) HasValidationErrors() bool {
-	if len(r.Body.ValidationErrors) < 1 {
+func (resp *Response) HasValidationErrors() bool {
+	if len(resp.Body.ValidationErrors) < 1 {
 		return false
 	}
 	return true
